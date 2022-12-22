@@ -28,7 +28,7 @@ const App = () => {
 
 
   return (
-    <div className='container'>
+    <div>
       <AppHeader/>
       <SearchPanel/>
       <TodoList todos={todoData}/>
