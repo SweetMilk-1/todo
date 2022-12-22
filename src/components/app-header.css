@@ -1,0 +1,15 @@
+.app-header {
+    position: relative;
+}
+
+.app-header-h1 {
+    right: 0;
+}
+
+.app-header-p {
+    font-size: 10pt;
+    color:darkgray;
+    position: absolute;
+    text-align: right;
+    bottom: 0;
+}
