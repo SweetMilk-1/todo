@@ -23,6 +23,8 @@ export default class App extends Component {
   }
 
   state = {
+    search: '',
+    filter: 'all',
     todoData : [
       this.createTodoItem('Drink Coffee'),
       this.createTodoItem('Make Awesome App'),
@@ -30,11 +32,21 @@ export default class App extends Component {
     ]
   };
 
+    changeFilter = (filter) => {
+        this.setState({
+          filter: filter
+        });
+    }
+
+    changeSearch = (str) => {
+      this.setState({
+        search:str
+      });
+    }
 
     deleteItem = (id) => {
-
       this.setState( ({ todoData }) => {
-        
+      
         const idx =todoData.findIndex((el)=> el.id===id )
         const newTodoData = [
           ...todoData.slice(0, idx),
@@ -78,7 +90,6 @@ export default class App extends Component {
     }
 
     changeDone = (id) => {
-      
       this.setState(({todoData}) => {
         const newTodoData = this.changeProperty(todoData, id, "done");
         return {
@@ -96,22 +107,37 @@ export default class App extends Component {
       });
     };
 
+    filterTodoData = ({todoData, search, filter}) => {
+      return todoData
+      .filter((el) => {
+        if (filter === 'all')
+          return true;
+        if (filter === 'active' && !el.done || filter === 'done' && el.done)
+          return true;
+        return false;
+        })
+      .filter((el) => el.label.toUpperCase().includes(search.toUpperCase()));
+    } 
+
   render() {
 
-    const {todoData} = this.state;
-    const doneCount = todoData.filter((item) => item.done).length;
-    const todoCount = todoData.length - doneCount;
+    const {filter} = this.state;
+
+    const todos = this.filterTodoData(this.state)
+    
+    const doneCount = todos.filter((item) => item.done).length;
+    const todoCount = todos.length - doneCount;
     
     return (
       <div className="todo-app">
         <AppHeader toDo={todoCount} done={doneCount} /> 
         <div className="top-panel d-flex">
-          <SearchPanel />
-          <ItemStatusFilter />
+          <SearchPanel onChangeSearch={this.changeSearch}/>
+          <ItemStatusFilter selected={filter} onChangeFilter={this.changeFilter}/>
         </div>
   
         <TodoList 
-          todos={todoData} 
+          todos={todos}
           onDeleted={this.deleteItem} 
           onToggleDone={this.changeDone}
           onToggleImportant={this.changeImportant}/>
